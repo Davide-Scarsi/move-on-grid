@@ -20,13 +20,15 @@
         }
 
         .container {
+            --grid-size: 5;
+
             margin: 0 auto;
             width: 80%;
             background-color: white;
             height: 100svh;
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(5, 1fr);
+            grid-template-columns: repeat(var(--grid-size), 1fr);
+            grid-template-rows: repeat(var(--grid-size), 1fr);
 
         }
         .container>* {
@@ -34,14 +36,17 @@
         }
 
         .player-1{
+            --x: 1;
+            --y: 1;
+
             background-color: red;
             height: 100%;
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            grid-column: var(--x)/ calc( var(--x) + 1);
-            grid-row: var(--y)/ calc( var(--y) + 1);
+            grid-column: var(--x);
+            grid-row: var(--y);
         }
     </style>
 
@@ -52,40 +57,40 @@
     <script>
         document.onreadystatechange = () => {
            var playerOne = document.querySelector('.player-1')
+           let playerOneComputedStyle = getComputedStyle(playerOne);
 
            let positionX = new Map
            let positionY = new Map
 
-           positionX.set(playerOne, 1)
-           positionY.set(playerOne, 1)
+           positionX.set(playerOne, parseInt(playerOneComputedStyle.getPropertyValue('--x')))
+           positionY.set(playerOne, parseInt(playerOneComputedStyle.getPropertyValue('--y')))
 
            document.addEventListener('keydown',e=>{
             switch (e.key) {
                 case "ArrowDown":
                     
-                    positionY.set(playerOne, Math.max(1, Math.min(5,  positionY.get(playerOne)+1 == 6 ? 1 : positionY.get(playerOne)+1)))                 
+                    positionY.set(playerOne, Math.max(1, Math.min(5,  positionY.get(playerOne)+1 > 5 ? 1 : positionY.get(playerOne)+1)))                 
                     break;
                 case "ArrowUp":
-                    positionY.set(playerOne, Math.max(1, Math.min(5,  positionY.get(playerOne)-1 == 0 ? 5 : positionY.get(playerOne)-1)))
+                    positionY.set(playerOne, Math.max(1, Math.min(5,  positionY.get(playerOne)-1 < 1 ? 5 : positionY.get(playerOne)-1)))
                     break;
                 case "ArrowRight":
-                    positionX.set(playerOne, Math.max(1, Math.min(5,  positionX.get(playerOne)+1 == 6 ? 1 : positionX.get(playerOne)+1)))
+                    positionX.set(playerOne, Math.max(1, Math.min(5,  positionX.get(playerOne)+1 > 5 ? 1 : positionX.get(playerOne)+1)))
                     break;
                 case "ArrowLeft":
-                    positionX.set(playerOne, Math.max(1, Math.min(5,  positionX.get(playerOne)-1 == 0 ? 5 : positionX.get(playerOne)-1)))
+                    positionX.set(playerOne, Math.max(1, Math.min(5,  positionX.get(playerOne)-1 < 1 ? 5 : positionX.get(playerOne)-1)))
                     break;
             
                 default:
                     break;
             }
             movePlayer()
-
            })
 
            function movePlayer(){
                 playerOne.style.setProperty('--y', positionY.get(playerOne))
                 playerOne.style.setProperty('--x', positionX.get(playerOne))
-                console.log(`positionX ${positionX.get(playerOne)}/${positionX.get(playerOne)+1} - positionY ${positionY.get(playerOne)}/${positionX.get(playerOne)+1}`);
+                console.log(`X ${positionX.get(playerOne)} - Y ${positionY.get(playerOne)}`);
            }
         };
     </script>
